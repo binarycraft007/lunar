@@ -158,9 +158,7 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 
 			if len(day) > 0 && len(months) > 0 {
 				if timeIn.Before(june15th) &&
-					(months[0] == "一月" ||
-						months[0] == "正月" ||
-						months[len(months)-1] == "十二月") {
+					isJanOrDecMonth(months[0]) {
 					year = yearAlias(timeIn.Year() - 1)
 				} else {
 					year = yearAlias(timeIn.Year())
@@ -173,6 +171,10 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 
 	result := year + "年" + month + day
 	return &result, nil
+}
+
+func isJanOrDecMonth(month string) bool {
+	return month == "一月" || month == "正月" || month == "十二月"
 }
 
 func monthConvert(month string) string {
