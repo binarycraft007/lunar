@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -34,6 +33,9 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 	// Split the text into lines
 	lines := strings.Split(string(data), "\n")
 
+	var months []string
+	var month string
+	var day string
 	// Loop through the lines and split each line into columns
 	for i, line := range lines {
 		// Skip the first three lines
@@ -48,6 +50,10 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 		if len(fields) >= 3 {
 			layout := "2006年01月02日"
 
+			if strings.HasSuffix(fields[1], "月") {
+				months = append(months, fields[1])
+			}
+
 			// Parse the date string into a time.Time value
 			timeParsed, err := time.Parse(layout, fields[0])
 			if err != nil {
@@ -57,11 +63,60 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 			if timeIn.Year() == timeParsed.Year() &&
 				timeIn.Month() == timeParsed.Month() &&
 				timeIn.Day() == timeParsed.Day() {
-				return &fields[1], nil
+				if strings.HasSuffix(fields[1], "月") {
+					day = "初一"
+				} else {
+					day = fields[1]
+				}
+
+				if len(months) > 0 {
+					month = months[len(months)-1]
+					break
+				} else {
+					continue
+				}
+			}
+
+			if len(day) > 0 && len(months) > 0 {
+				// TODO fix this, should minus one
+				month = monthConvert(months[len(months)-1])
+				break
 			}
 		}
 	}
-	return nil, errors.New("Not found")
+
+	result := month + day
+	return &result, nil
+}
+
+func monthConvert(month string) string {
+	switch month {
+	case "一月":
+		return "正月"
+	case "二月":
+		return month
+	case "三月":
+		return month
+	case "四月":
+		return month
+	case "五月":
+		return month
+	case "六月":
+		return month
+	case "七月":
+		return month
+	case "八月":
+		return month
+	case "九月":
+		return month
+	case "十月":
+		return month
+	case "十一月":
+		return "冬月"
+	case "十二月":
+		return "腊月"
+	}
+	return month
 }
 
 func downloadConvert(year int) error {
