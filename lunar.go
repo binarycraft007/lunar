@@ -18,7 +18,6 @@ import (
 
 //go:embed lunar/data.tar.gz
 var b []byte
-var lookupMap map[string][]byte
 var numberAlias = [...]string{
 	"零", "一", "二", "三", "四",
 	"五", "六", "七", "八", "九",
