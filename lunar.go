@@ -138,8 +138,9 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 				} else {
 					if strings.HasPrefix(fields[1], "二") {
 						day = strings.Replace(fields[1], "二", "廿", 1)
+					} else {
+						day = fields[1]
 					}
-					day = fields[1]
 				}
 
 				if len(months) > 0 {
