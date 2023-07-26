@@ -136,7 +136,7 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 				if strings.HasSuffix(fields[1], "月") {
 					day = "初一"
 				} else {
-					if strings.HasSuffix(fields[1], "二") {
+					if strings.HasPrefix(fields[1], "二") {
 						day = strings.Replace(fields[1], "二", "廿", 1)
 					}
 					day = fields[1]
