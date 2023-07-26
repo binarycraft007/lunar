@@ -24,13 +24,13 @@ var numberAlias = [...]string{
 }
 
 type Lunar struct {
-	lookupMap map[string][]byte
+	LookupMap map[string][]byte
 }
 
 func NewLunar() (*Lunar, error) {
 	var err error
 	var lunar Lunar
-	if lunar.lookupMap, err = lookupTablesToMap(b); err != nil {
+	if lunar.LookupMap, err = lookupTablesToMap(b); err != nil {
 		return nil, err
 	}
 	return &lunar, nil
@@ -83,7 +83,7 @@ func lookupTablesToMap(b []byte) (map[string][]byte, error) {
 
 func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 	fileName := fmt.Sprintf("%d.txt", timeIn.Year())
-	data, ok := l.lookupMap[fileName]
+	data, ok := l.LookupMap[fileName]
 	if !ok {
 		return nil, fmt.Errorf("Year not found: %d", timeIn.Year())
 	}
