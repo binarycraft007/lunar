@@ -168,6 +168,7 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 }
 
 func monthConvert(month string) string {
+	month = strings.TrimPrefix(month, "閏")
 	switch month {
 	case "一月":
 		return "正月"
@@ -181,7 +182,10 @@ func monthConvert(month string) string {
 }
 
 func lastMonthConvert(month string) string {
+	month = strings.TrimPrefix(month, "閏")
 	switch month {
+	case "正月":
+		return "腊月"
 	case "一月":
 		return "腊月"
 	case "二月":

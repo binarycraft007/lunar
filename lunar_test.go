@@ -23,6 +23,14 @@ func TestAllLookup(t *testing.T) {
 			if lunarDate, err = l.TimeToLunar(date); err != nil {
 				t.Fatalf("to lunar: %v", err)
 			}
+
+			if len(*lunarDate) != 27 {
+				t.Log("diagnostics dump:")
+				t.Log("    number of bytes:", len(*lunarDate))
+				t.Log("    converted lunar date:", *lunarDate)
+				t.Fatalf("convert lunar: %s", date.Format("2006-01-02"))
+			}
+
 			t.Log("converted lunar date:", *lunarDate)
 
 			date = date.AddDate(0, 0, 1)
