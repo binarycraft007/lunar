@@ -114,9 +114,9 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 				months = append(months, fields[1])
 			}
 
-			indexYear := bytes.IndexRune([]byte(fields[0]), '年')
-			indexMonth := bytes.IndexRune([]byte(fields[0]), '月')
-			indexDay := bytes.IndexRune([]byte(fields[0]), '日')
+			indexYear := strings.IndexAny(fields[0], "年")
+			indexMonth := strings.IndexAny(fields[0], "月")
+			indexDay := strings.IndexAny(fields[0], "日")
 
 			if (indexMonth-indexYear) == 4 ||
 				(indexDay-indexMonth) == 4 {
