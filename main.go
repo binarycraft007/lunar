@@ -36,6 +36,7 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 	var months []string
 	var month string
 	var day string
+	layout := "2006年01月02日"
 	// Loop through the lines and split each line into columns
 	for i, line := range lines {
 		// Skip the first three lines
@@ -48,8 +49,6 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 
 		// Print the columns
 		if len(fields) >= 3 {
-			layout := "2006年01月02日"
-
 			if strings.HasSuffix(fields[1], "月") {
 				months = append(months, fields[1])
 			}
@@ -70,7 +69,7 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 				}
 
 				if len(months) > 0 {
-					month = months[len(months)-1]
+					month = monthConvert(months[len(months)-1])
 					break
 				} else {
 					continue
@@ -78,8 +77,7 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 			}
 
 			if len(day) > 0 && len(months) > 0 {
-				// TODO fix this, should minus one
-				month = monthConvert(months[len(months)-1])
+				month = lastMonthConvert(months[len(months)-1])
 				break
 			}
 		}
@@ -93,30 +91,44 @@ func monthConvert(month string) string {
 	switch month {
 	case "一月":
 		return "正月"
-	case "二月":
-		return month
-	case "三月":
-		return month
-	case "四月":
-		return month
-	case "五月":
-		return month
-	case "六月":
-		return month
-	case "七月":
-		return month
-	case "八月":
-		return month
-	case "九月":
-		return month
-	case "十月":
-		return month
 	case "十一月":
 		return "冬月"
 	case "十二月":
 		return "腊月"
+	default:
+		return month
 	}
-	return month
+}
+
+func lastMonthConvert(month string) string {
+	switch month {
+	case "一月":
+		return "腊月"
+	case "二月":
+		return "一月"
+	case "三月":
+		return "二月"
+	case "四月":
+		return "三月"
+	case "五月":
+		return "四月"
+	case "六月":
+		return "五月"
+	case "七月":
+		return "六月"
+	case "八月":
+		return "七月"
+	case "九月":
+		return "八月"
+	case "十月":
+		return "九月"
+	case "十一月":
+		return "十月"
+	case "十二月":
+		return "冬月"
+	default:
+		return ""
+	}
 }
 
 func downloadConvert(year int) error {
@@ -142,7 +154,7 @@ func downloadConvert(year int) error {
 		return err
 	}
 
-	err = ioutil.WriteFile(fmt.Sprintf("%d.txt", year), bytes, 0644)
+	err = ioutil.WriteFile(path.Join("lunar", fmt.Sprintf("%d.txt", year)), bytes, 0644)
 	if err != nil {
 		return err
 	}
