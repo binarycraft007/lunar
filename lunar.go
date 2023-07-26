@@ -97,7 +97,7 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 	var year string
 	var month string
 	var day string
-	layout := "2006年1月2日"
+	var layout string
 	// Loop through the lines and split each line into columns
 	for i, line := range lines {
 		// Skip the first three lines
@@ -114,11 +114,16 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 				months = append(months, fields[1])
 			}
 
-			//indexYear := bytes.IndexRune([]byte(fields[0]), '年')
-			//indexMonth := bytes.IndexRune([]byte(fields[0]), '月')
-			//indexDay := bytes.IndexRune([]byte(fields[0]), '日')
+			indexYear := bytes.IndexRune([]byte(fields[0]), '年')
+			indexMonth := bytes.IndexRune([]byte(fields[0]), '月')
+			indexDay := bytes.IndexRune([]byte(fields[0]), '日')
 
-			//fmt.Println(indexYear, indexMonth, indexDay)
+			if (indexYear-indexMonth) == 4 ||
+				(indexMonth-indexDay) == 4 {
+				layout = "2006年1月2日"
+			} else {
+				layout = "2006年01月02日"
+			}
 
 			// Parse the date string into a time.Time value
 			timeParsed, err := time.Parse(layout, fields[0])
