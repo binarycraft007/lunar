@@ -18,7 +18,7 @@ func TestAllLookup(t *testing.T) {
 		year, err := strconv.Atoi(yearStr)
 		date := time.Date(year, time.January, 1, 0, 0, 0, 0, time.UTC)
 		for date.Year() == year {
-			t.Log("original gregorian date:", date.Format("2006-01-01"))
+			t.Log("original gregorian date:", date.Format("2006-01-02"))
 			var lunarDate *string
 			if lunarDate, err = l.TimeToLunar(date); err != nil {
 				t.Fatalf("to lunar: %v", err)
