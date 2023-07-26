@@ -139,7 +139,10 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 				}
 
 				if len(months) > 0 {
-					if months[len(months)-1] == "十二月" {
+					if day == "初一" {
+						year = yearAlias(timeIn.Year())
+					} else if timeIn.Day() < 15 &&
+						months[len(months)-1] == "十二月" {
 						year = yearAlias(timeIn.Year() - 1)
 					} else {
 						year = yearAlias(timeIn.Year())
@@ -152,7 +155,11 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 			}
 
 			if len(day) > 0 && len(months) > 0 {
-				if months[0] == "一月" || months[0] == "十二月" {
+				if day == "初一" {
+					year = yearAlias(timeIn.Year())
+				} else if months[0] == "一月" ||
+					months[0] == "十二月" ||
+					months[0] == "正月" {
 					year = yearAlias(timeIn.Year() - 1)
 				} else {
 					year = yearAlias(timeIn.Year())
