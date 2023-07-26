@@ -96,6 +96,7 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 	var month string
 	var day string
 	var layout string
+	june15th := time.Date(timeIn.Year(), time.June, 15, 0, 0, 0, 0, time.UTC)
 	// Loop through the lines and split each line into columns
 	for i, line := range lines {
 		// Skip the first three lines
@@ -142,9 +143,7 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 				}
 
 				if len(months) > 0 {
-					if day == "初一" {
-						year = yearAlias(timeIn.Year())
-					} else if timeIn.Day() < 15 &&
+					if timeIn.Before(june15th) &&
 						months[len(months)-1] == "十二月" {
 						year = yearAlias(timeIn.Year() - 1)
 					} else {
@@ -158,11 +157,10 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 			}
 
 			if len(day) > 0 && len(months) > 0 {
-				if day == "初一" {
-					year = yearAlias(timeIn.Year())
-				} else if months[0] == "一月" ||
-					months[0] == "十二月" ||
-					months[0] == "正月" {
+				if timeIn.Before(june15th) &&
+					(months[0] == "一月" ||
+						months[0] == "正月" ||
+						months[len(months)-1] == "十二月") {
 					year = yearAlias(timeIn.Year() - 1)
 				} else {
 					year = yearAlias(timeIn.Year())

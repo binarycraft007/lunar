@@ -41,9 +41,9 @@ func TestAllLookup(t *testing.T) {
 			gap := date.Sub(*timeParsed)
 
 			// Check if the gap is greater than a year
-			if gap > time.Hour*24*365 {
+			if gap > time.Hour*24*365 || gap < 0 {
 				t.Fatalf(
-					"gap bigger than one year, %s %s",
+					"gap bigger than one year or is negative, %s %s",
 					date.Format("2006-01-02"),
 					timeParsed.Format("2006-01-02"),
 				)
