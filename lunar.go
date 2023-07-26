@@ -118,8 +118,8 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 			indexMonth := bytes.IndexRune([]byte(fields[0]), '月')
 			indexDay := bytes.IndexRune([]byte(fields[0]), '日')
 
-			if (indexYear-indexMonth) == 4 ||
-				(indexMonth-indexDay) == 4 {
+			if (indexMonth-indexYear) == 4 ||
+				(indexDay-indexMonth) == 4 {
 				layout = "2006年1月2日"
 			} else {
 				layout = "2006年01月02日"
