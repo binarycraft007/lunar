@@ -11,6 +11,19 @@ import (
 	"golang.org/x/text/encoding/traditionalchinese"
 )
 
+var numberAlias = [...]string{
+	"零", "一", "二", "三", "四",
+	"五", "六", "七", "八", "九",
+}
+
+func yearAlias(year int) string {
+	s := fmt.Sprintf("%d", year)
+	for i, replace := range numberAlias {
+		s = strings.Replace(s, fmt.Sprintf("%d", i), replace, -1)
+	}
+	return s
+}
+
 func main() {
 	timeIn, err := time.Parse("2006-01-02", "1996-07-15")
 	if err != nil {
@@ -34,6 +47,7 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 	lines := strings.Split(string(data), "\n")
 
 	var months []string
+	var year string
 	var month string
 	var day string
 	layout := "2006年01月02日"
@@ -69,6 +83,11 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 				}
 
 				if len(months) > 0 {
+					if months[len(months)-1] == "十二月" {
+						year = yearAlias(timeIn.Year() - 1)
+					} else {
+						year = yearAlias(timeIn.Year())
+					}
 					month = monthConvert(months[len(months)-1])
 					break
 				} else {
@@ -77,13 +96,18 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 			}
 
 			if len(day) > 0 && len(months) > 0 {
+				if months[0] == "一月" || months[0] == "十二月" {
+					year = yearAlias(timeIn.Year() - 1)
+				} else {
+					year = yearAlias(timeIn.Year())
+				}
 				month = lastMonthConvert(months[len(months)-1])
 				break
 			}
 		}
 	}
 
-	result := month + day
+	result := year + "年" + month + day
 	return &result, nil
 }
 
