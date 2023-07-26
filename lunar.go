@@ -186,7 +186,7 @@ func lastMonthConvert(month string) string {
 	case "一月":
 		return "腊月"
 	case "二月":
-		return "一月"
+		return "正月"
 	case "三月":
 		return "二月"
 	case "四月":
