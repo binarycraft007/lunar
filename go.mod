@@ -1,4 +1,4 @@
-module lunar
+module github.com/binarycraft007/lunar
 
 go 1.20
 

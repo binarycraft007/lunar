@@ -1,4 +1,4 @@
-package main
+package lunar
 
 import (
 	"archive/tar"
@@ -25,28 +25,25 @@ var numberAlias = [...]string{
 	"五", "六", "七", "八", "九",
 }
 
+type Lunar struct {
+	lookupMap map[string][]byte
+}
+
+func NewLunar() (*Lunar, error) {
+	var err error
+	var lunar Lunar
+	if lunar.lookupMap, err = lookupTablesToMap(b); err != nil {
+		return nil, err
+	}
+	return &lunar, nil
+}
+
 func yearAlias(year int) string {
 	s := fmt.Sprintf("%d", year)
 	for i, replace := range numberAlias {
 		s = strings.Replace(s, fmt.Sprintf("%d", i), replace, -1)
 	}
 	return s
-}
-
-func main() {
-	var err error
-	if lookupMap, err = lookupTablesToMap(b); err != nil {
-		panic(err)
-	}
-	timeIn, err := time.Parse("2006-01-02", "1901-01-20")
-	if err != nil {
-		panic(err)
-	}
-	day, err := findLunarDay(timeIn)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(*day)
 }
 
 func lookupTablesToMap(b []byte) (map[string][]byte, error) {
@@ -86,9 +83,9 @@ func lookupTablesToMap(b []byte) (map[string][]byte, error) {
 	return files, nil
 }
 
-func findLunarDay(timeIn time.Time) (*string, error) {
+func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 	fileName := fmt.Sprintf("%d.txt", timeIn.Year())
-	data, ok := lookupMap[fileName]
+	data, ok := l.lookupMap[fileName]
 	if !ok {
 		return nil, errors.New("Year not found")
 	}
@@ -100,7 +97,7 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 	var year string
 	var month string
 	var day string
-	layout := "2006年01月02日"
+	layout := "2006年1月2日"
 	// Loop through the lines and split each line into columns
 	for i, line := range lines {
 		// Skip the first three lines
@@ -116,6 +113,12 @@ func findLunarDay(timeIn time.Time) (*string, error) {
 			if strings.HasSuffix(fields[1], "月") {
 				months = append(months, fields[1])
 			}
+
+			//indexYear := bytes.IndexRune([]byte(fields[0]), '年')
+			//indexMonth := bytes.IndexRune([]byte(fields[0]), '月')
+			//indexDay := bytes.IndexRune([]byte(fields[0]), '日')
+
+			//fmt.Println(indexYear, indexMonth, indexDay)
 
 			// Parse the date string into a time.Time value
 			timeParsed, err := time.Parse(layout, fields[0])
