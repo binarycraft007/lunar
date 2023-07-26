@@ -159,7 +159,7 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 				} else {
 					year = yearAlias(timeIn.Year())
 				}
-				month = lastMonthConvert(months[len(months)-1])
+				month = lastMonthConvert(months[0])
 				break
 			}
 		}
