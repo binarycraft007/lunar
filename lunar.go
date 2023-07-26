@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"compress/gzip"
 	_ "embed"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -87,7 +86,7 @@ func (l *Lunar) TimeToLunar(timeIn time.Time) (*string, error) {
 	fileName := fmt.Sprintf("%d.txt", timeIn.Year())
 	data, ok := l.lookupMap[fileName]
 	if !ok {
-		return nil, errors.New("Year not found")
+		return nil, fmt.Errorf("Year not found: %d", timeIn.Year())
 	}
 
 	// Split the text into lines
