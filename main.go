@@ -1,7 +1,13 @@
 package main
 
 import (
+	"archive/tar"
+	"bytes"
+	"compress/gzip"
+	_ "embed"
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"path"
@@ -11,6 +17,9 @@ import (
 	"golang.org/x/text/encoding/traditionalchinese"
 )
 
+//go:embed lunar/data.tar.gz
+var b []byte
+var lookupMap map[string][]byte
 var numberAlias = [...]string{
 	"零", "一", "二", "三", "四",
 	"五", "六", "七", "八", "九",
@@ -25,7 +34,11 @@ func yearAlias(year int) string {
 }
 
 func main() {
-	timeIn, err := time.Parse("2006-01-02", "1996-07-15")
+	var err error
+	if lookupMap, err = lookupTablesToMap(b); err != nil {
+		panic(err)
+	}
+	timeIn, err := time.Parse("2006-01-02", "1901-01-20")
 	if err != nil {
 		panic(err)
 	}
@@ -36,11 +49,48 @@ func main() {
 	fmt.Println(*day)
 }
 
-func findLunarDay(timeIn time.Time) (*string, error) {
-	fileName := fmt.Sprintf("%d.txt", timeIn.Year())
-	data, err := ioutil.ReadFile(path.Join("lunar", fileName))
+func lookupTablesToMap(b []byte) (map[string][]byte, error) {
+	// Create a gzip reader
+	gzipReader, err := gzip.NewReader(bytes.NewReader(b))
 	if err != nil {
 		return nil, err
+	}
+	defer gzipReader.Close()
+
+	// Create a tar reader
+	tarReader := tar.NewReader(gzipReader)
+
+	// Create a map to store the file contents
+	files := make(map[string][]byte)
+
+	// Iterate over the files in the tar archive
+	for {
+		header, err := tarReader.Next()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return nil, err
+		}
+
+		// Read the file contents into a buffer
+		buffer := new(bytes.Buffer)
+		_, err = io.Copy(buffer, tarReader)
+		if err != nil {
+			return nil, err
+		}
+
+		// Add the file contents to the map
+		files[path.Base(header.Name)] = buffer.Bytes()
+	}
+	return files, nil
+}
+
+func findLunarDay(timeIn time.Time) (*string, error) {
+	fileName := fmt.Sprintf("%d.txt", timeIn.Year())
+	data, ok := lookupMap[fileName]
+	if !ok {
+		return nil, errors.New("Year not found")
 	}
 
 	// Split the text into lines
