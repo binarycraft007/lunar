@@ -15,6 +15,7 @@ func TestAllLookup(t *testing.T) {
 	}
 
 	for name, _ := range l.LookupMap {
+		var lastMonth time.Month = 0
 		yearStr := strings.TrimSuffix(name, ".txt")
 		year, err := strconv.Atoi(yearStr)
 		date := time.Date(year, time.January, 1, 0, 0, 0, 0, time.UTC)
@@ -37,6 +38,13 @@ func TestAllLookup(t *testing.T) {
 				t.Fatalf("parse lunar: %v", err)
 			}
 
+			if lastMonth != 0 && !monthCheck(lastMonth, timeParsed.Month()) {
+				t.Fatalf("month in same year is not continuous: %v, %v",
+					timeParsed.Month(), lastMonth)
+			}
+
+			lastMonth = timeParsed.Month() // set lastMonth now
+
 			// Calculate the time gap between the two times
 			gap := date.Sub(*timeParsed)
 
@@ -54,6 +62,16 @@ func TestAllLookup(t *testing.T) {
 			date = date.AddDate(0, 0, 1)
 		}
 	}
+}
+
+func monthCheck(last time.Month, current time.Month) bool {
+	if last == time.December && current == time.January {
+		return true
+	} else if current < last || int(current-last) > 1 {
+		return false
+	}
+
+	return true
 }
 
 func yearAliasToNum(s string) (int, error) {
